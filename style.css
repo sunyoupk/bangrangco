@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 Theme Name: bangrang
 Description: 방랑부부 테마
@@ -8,3 +9,5 @@ Template: Storefront
 Text Domain:  bangrang
 */
 @import url("../storefront/style.css");
+
+/*# sourceMappingURL=style.css.map */
