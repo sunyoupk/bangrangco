@@ -1,0 +1,93 @@
+/**
+ * WooCommerce checkout shipping fields customizing.
+ */
+.shipping-address-method-fields {
+
+  .shipping_address_methods {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    > .bangrang-ShippingAddressMethod,
+    > .shipping_address_method {
+      > label {
+        display: block;
+        padding: ms(2);
+        cursor: pointer;
+      }
+    }
+
+    li {
+      list-style: none !important;
+      margin-left: 0;
+      position: relative;
+
+      img {
+        float: right;
+        border: 0;
+        padding: 0;
+        max-height: ms(3);
+      }
+
+      &:last-child:not( .woocommerce-notice ) {
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .shipping_address_box {
+        padding: ms(2);
+
+        fieldset {
+          border: 0;
+          margin: 0;
+          padding: 1em 0 0;
+          font-size: ms(-1);
+
+          label {
+            width: auto;
+            margin-left: 0;
+          }
+
+          .form-row {
+            margin-bottom: 1em;
+
+            input[type='checkbox'] {
+              margin-right: 5px;
+            }
+          }
+
+          #cvv {
+            width: 22% !important;
+          }
+
+          .help {
+            width: 75%;
+            float: right;
+          }
+        }
+
+        .bangrang-SavedPaymentMethods {
+          padding-top: 1em;
+          margin: 0;
+
+          li {
+            margin-top: ms(-2);
+
+            input[type=radio] {
+              margin-right: 0.236em;
+            }
+          }
+        }
+
+        ul.bangrang-saved-shipping-address-methods {
+          margin-left: 0;
+        }
+
+      }
+    }
+  }
+
+}

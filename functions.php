@@ -10,8 +10,9 @@
 /**
  * Assign the bangrang version to a var
  */
-$theme            = wp_get_theme( 'bangrang' );
+$theme            = wp_get_theme( get_stylesheet() );
 $bangrang_version = $theme['Version'];
+define( 'BANGRANG_VERSION', $bangrang_version );
 
 /**
  * Set the content width based on the theme's design and stylesheet.
@@ -22,18 +23,16 @@ if ( ! isset( $content_width ) ) {
 
 $bangrang = (object) array(
 	'version' => $bangrang_version,
-	'main'    => require 'includes/class-bangrang.php',
+	'main'    => require_once 'includes/class-bangrang.php',
 //	'walker_nav' => require 'includes/class-bangrang-walker-nav.php',
 //	'customizer' => require 'includes/customizer/class-bangrang-customizer.php',
 );
 
-include_once 'includes/bangrang-core-functions.php';
-//require 'includes/bangrang-template-hooks.php';
-//require 'includes/bangrang-template-functions.php';
+require_once 'includes/bangrang-core-functions.php';
 
 if ( bangrang_is_woocommerce_activated() ) {
-	$bangrang->woocommerce = include_once 'includes/class-bangrang-woocommerce.php';
-
-//	include_once 'includes/woocommerce/bangrang-woocommerce-template-hooks.php';
+	$bangrang->woocommerce = require_once 'includes/class-bangrang-woocommerce.php';
+	require_once 'includes/bangrang-woocommerce-functions.php';
+	//	include_once 'includes/woocommerce/bangrang-woocommerce-template-hooks.php';
 //	include_once 'includes/woocommerce/bangrang-woocommerce-template-functions.php';
 }

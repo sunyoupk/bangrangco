@@ -1,0 +1,36 @@
+@mixin sf-fa-icon {
+  @include fa-icon;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+
+.shipping-address-method-fields {
+  .shipping_address_methods {
+    > .bangrang-ShippingAddressMethod,
+    > .shipping_address_method {
+      > label {
+        &::before {
+          @include sf-fa-icon;
+          content: fa-content( $fa-var-circle );
+          margin-right: ms(-3);
+          transition: color, ease, 0.2s;
+        }
+      }
+    }
+
+    li {
+      &.bangrang-ShippingAddressMethod,
+      &.shipping_address_method {
+        > input[type=radio]:first-child {
+          @include screen-reader-text();
+
+          &:checked + label::before {
+            content: fa-content( $fa-var-dot-circle );
+          }
+        }
+      }
+    }
+  }
+}

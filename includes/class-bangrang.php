@@ -45,7 +45,7 @@ class Bangrang {
 		/**
 		 * Styles
 		 */
-		wp_register_style( 'bangrang', get_stylesheet_directory() . '/assets/css/bangrang' . $suffix . '.css', array(), $bangrang_version );
+		wp_register_style( 'bangrang', get_stylesheet_directory_uri() . '/assets/css/bangrang' . $suffix . '.css', array(), $bangrang_version );
 //		wp_enqueue_style( 'bangrang-style', get_template_directory_uri() . '/style.css', array( 'bangrang' ), $bangrang_version );
 //		wp_enqueue_style( 'bangrang-font', get_template_directory_uri() . '/assets/css/bookcraft-font.css', '', $bangrang_version );
 
