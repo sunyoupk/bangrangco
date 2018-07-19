@@ -38,18 +38,18 @@ if ( ! function_exists( 'bangrang_storefront_customizer_css' ) ) {
 		$storefront_customizer = new Storefront_Customizer();
 		$storefront_theme_mods = $storefront_customizer->get_storefront_theme_mods();
 
-        $styles .= '
+		$styles .= '
             .shipping-address-method-fields .shipping_address_methods > li .shipping_address_box,
 			.shipping-address-method-fields .place-order {
-				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], -5 ) . ';
+				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], - 5 ) . ';
 			}
 
 			.shipping-address-method-fields .shipping_address_methods > li:not(.woocommerce-notice) {
-				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], -10 ) . ';
+				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], - 10 ) . ';
 			}
 
 			.shipping-address-method-fields .shipping_address_methods > li:not(.woocommerce-notice):hover {
-				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], -15 ) . ';
+				background-color: ' . storefront_adjust_color_brightness( $storefront_theme_mods['background_color'], - 15 ) . ';
 			}
 			
 			.shipping-address-method-fields .shipping_address_methods li input[type=radio]:first-child:checked+label:before {
@@ -67,43 +67,51 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 	 * Defer shipping form fields.
 	 */
 	function bangrang_before_checkout_shipping_form( $checkout ) {
-?>
-		<div class="shipping-address-method-fields">
-			<p class="form-row form-row-wide shipping-address-method-field validate-required" id="shipping_address_method_field" data-priority="50">
-				<ul class="bangrang_shipping_methods shipping_address_methods methods">
+		$shipping_address_methods = array(
+			'direct' => array(
+				'input_id'    => 'shipping_address_method_direct',
+				'input_value' => 'direct',
+				'label'       => '주소 직접입력',
+				'description' => '선물로 보낼 주소를 직접 입력합니다.',
+			),
+			'sms'    => array(
+				'input_id'    => 'shipping_address_method_sms',
+				'input_value' => 'sms',
+				'label'       => '주소 입력폼 전송(SMS)',
+				'description' => '받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 SMS로 전송합니다.',
+			),
+			'kakao'  => array(
+				'input_id'    => 'shipping_address_method_kakao',
+				'input_value' => 'kakao',
+				'label'       => '주소 입력폼 전송(kakao talk)',
+				'description' => '받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 kakao talk로 전송합니다.',
+			),
+		);
+		?>
+        <div class="shipping-address-method-fields">
+        <p class="form-row form-row-wide shipping-address-method-field validate-required"
+           id="shipping_address_method_field" data-priority="50">
+        <ul class="bangrang_shipping_methods shipping_address_methods methods">
 
-                    <li class="shipping_address_method shipping_address_method_direct">
-                        <input id="shipping_address_method_direct" type="radio" class="input-radio" name="shipping_address_method" value="direct" data-order_button_text="">
-                        <label for="shipping_address_method_direct">주소 직접입력</label>
-                        <div class="shipping_address_box shipping_address_method_direct" style="display: none;">
-                            <p>선물로 보낼 주소를 직접 입력합니다.</p>
-                        </div>
-                    </li>
+		<?php
 
-                    <li class="shipping_address_method shipping_address_method_sms">
-                        <input id="shipping_address_method_sms" type="radio" class="input-radio" name="shipping_address_method" value="sms" data-order_button_text="">
-                        <label for="shipping_address_method_sms">주소 입력폼 전송(SMS)</label>
-                        <div class="shipping_address_box shipping_address_method_sms" style="display: none;">
-                            <p>받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 SMS로 전송합니다.</p>
-                        </div>
-                    </li>
-
-                    <li class="shipping_address_method shipping_address_method_kakao">
-                        <input id="shipping_address_method_kakao" type="radio" class="input-radio" name="shipping_address_method" value="kakao" data-order_button_text="">
-                        <label for="shipping_address_method_kakao">주소 입력폼 전송(kakao talk)</label>
-                        <div class="shipping_address_box shipping_address_method_kakao" style="display: none;">
-                            <p>받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 kakao talk로 전송합니다.</p>
-                        </div>
-                    </li>
-
-				</ul>
-
-			</p>
-
-		</div>
-
-
-<?php
-
+		foreach ( $shipping_address_methods as $name => $props ) {
+			?>
+            <li class="shipping_address_method <?php echo esc_attr( $props['input_id'] ); ?>">
+                <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio"
+                       name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
+                       data-order_button_text="">
+                <label for="<?php echo esc_attr( $props['input_id'] ); ?>"><?php echo esc_html( $props['label'] ); ?></label>
+                <div class="shipping_address_box <?php echo esc_attr( $props['input_id'] ); ?>">
+            <p><?php echo esc_html( $props['description'] ); ?></p>
+            </div>
+            </li>
+			<?php
+		}
+		?>
+        </ul>
+        </p>
+        </div>
+		<?php
 	}
 }

@@ -17,7 +17,7 @@ class Bangrang_WooCommerce {
 	private static $wp_localize_scripts = array();
 
 	/**
-	 * Bangrang_WooCommerce constructor.
+	 * Hook Bangrang_WooCommerce.
 	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
@@ -37,6 +37,12 @@ class Bangrang_WooCommerce {
 
 		if ( is_checkout() ) {
 			self::enqueue_script( 'bangrang-checkout' );
+		}
+	}
+
+	public static function localize_printed_scripts() {
+		foreach ( self::$scripts as $handle ) {
+			self::localize_script( $handle );
 		}
 	}
 
@@ -66,12 +72,6 @@ class Bangrang_WooCommerce {
 	private static function register_script( $handle, $path, $deps = array( 'jquery' ), $version = BANGRANG_VERSION, $in_footer = true ) {
 		self::$scripts[] = $handle;
 		wp_register_script( $handle, $path, $deps, $version, $in_footer );
-	}
-
-	public static function localize_printed_scripts() {
-		foreach ( self::$scripts as $handle ) {
-			self::localize_script( $handle );
-		}
 	}
 
 	private static function localize_script( $handle ) {
