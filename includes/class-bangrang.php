@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Bangrang {
 
+	public $query_vars = array();
+
 	/**
 	 * Bangrang constructor.
 	 */
@@ -31,7 +33,6 @@ class Bangrang {
 
 	public function setup() {
 	}
-
 
 	/**
 	 * Enqueue scripts and styles.

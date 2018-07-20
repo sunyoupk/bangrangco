@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<?php do_action( 'woocommerce_after_checkout_shipping_form', $checkout ); ?>
-
+            
 		</div>
 
 	<?php endif; ?>
