@@ -8,7 +8,6 @@
 
 add_filter( 'storefront_customizer_css', 'bangrang_storefront_customizer_css', 10, 1 );
 add_filter( 'woocommerce_checkout_fields', 'bangrang_unset_checkout_fields', 10, 1 );
-add_filter( 'woocommerce_checkout_fields', 'bangrang_checkout_fields', 10, 1 );
 add_filter( 'woocommerce_billing_fields', 'bangrang_billing_fields', 10, 2 );
 add_filter( 'woocommerce_shipping_fields', 'bangrang_shipping_fields', 10, 2 );
 
@@ -30,8 +29,7 @@ if ( ! function_exists( 'bangrang_unset_checkout_fields' ) ) {
 		unset( $fields['billing']['billing_city'] );
 
 		$fields['billing']['billing_address_1']['required'] = 0;
-		$fields['billing']['billing_postcode']['required'] = 0;
-
+		$fields['billing']['billing_postcode']['required']  = 0;
 
 		unset( $fields['shipping']['shipping_last_name'] );
 		unset( $fields['shipping']['shipping_company'] );
@@ -41,7 +39,11 @@ if ( ! function_exists( 'bangrang_unset_checkout_fields' ) ) {
 
 
 		$fields['shipping']['shipping_address_1']['required'] = 0;
-		$fields['shipping']['shipping_postcode']['required'] = 0;
+		$fields['shipping']['shipping_postcode']['required']  = 0;
+
+		$fields['shipping']['shipping_address_method'] = array(
+			'type' => 'radio',
+		);
 
 		return $fields;
 	}
@@ -137,42 +139,28 @@ if ( ! function_exists( 'bangrang_after_checkout_shipping_form' ) ) {
 	}
 }
 
-if ( ! function_exists( 'bangrang_checkout_fields' ) ) {
-	/**
-     * Checkout fields customization.
-     * Append Shipping address method.
-	 * @param $fields
-	 *
-	 * @return mixed
-	 */
-	function bangrang_checkout_fields( $fields ) {
-		$fields['shipping']['shipping_address_method'] = array(
-			'type'        => 'radio',
-		);
-		return $fields;
-	}
-}
-
 if ( ! function_exists( 'bangrang_after_checkout_validation' ) ) {
 	/**
-     * Validate address fields.
-     * todo if check many fields then replace code(iterlation...).
+	 * Validate address fields.
+	 * todo if check many fields then replace code(iterlation...).
+	 *
 	 * @param $data
 	 * @param WP_Error $errors
-     * @see WC_Checkout::get_posted_data()
+	 *
+	 * @see WC_Checkout::get_posted_data()
 	 */
 	function bangrang_after_checkout_validation( $data, $errors ) {
 		if ( $data['ship_to_different_address'] ) {
 
 			if ( $data['shipping_address_method'] === 'direct' && $data['shipping_address_1'] === '' ) {
 				$field_label = sprintf( __( 'Shipping %s', 'woocommerce' ), __( 'Street address', 'woocommerce' ) );
-                $errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
-            }
+				$errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
+			}
 
 			if ( $data['shipping_address_method'] === 'direct' && $data['shipping_postcode'] === '' ) {
 				$field_label = sprintf( __( 'Shipping %s', 'woocommerce' ), __( 'Postcode / ZIP', 'woocommerce' ) );
-                $errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
-            }
+				$errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
+			}
 
 		} else {
 			if ( $data['billing_address_1'] === '' ) {
@@ -189,11 +177,11 @@ if ( ! function_exists( 'bangrang_after_checkout_validation' ) ) {
 }
 
 if ( ! function_exists( 'bangrang_billing_fields' ) ) {
-	function bangrang_billing_fields( $address_fields, $country  ) {
+	function bangrang_billing_fields( $address_fields, $country ) {
 		error_log( print_r( $address_fields, true ) );
 
-		$billing_phone_field = $address_fields['billing_phone'];
-		$billing_phone_field['class'] = array( 'form-row-last' );
+		$billing_phone_field             = $address_fields['billing_phone'];
+		$billing_phone_field['class']    = array( 'form-row-last' );
 		$billing_phone_field['priority'] = 20;
 		unset( $address_fields['billing_phone'] );
 
@@ -207,9 +195,9 @@ if ( ! function_exists( 'bangrang_billing_fields' ) ) {
 }
 
 if ( ! function_exists( 'bangrang_shipping_fields' ) ) {
-	function bangrang_shipping_fields( $address_fields, $country  ) {
+	function bangrang_shipping_fields( $address_fields, $country ) {
 
-	    // New shipping phone filed
+		// New shipping phone filed
 		$shipping_phone_field = array(
 			'label'        => __( 'Phone', 'woocommerce' ),
 			'required'     => 'required' === get_option( 'woocommerce_checkout_phone_field', 'required' ),
@@ -221,7 +209,7 @@ if ( ! function_exists( 'bangrang_shipping_fields' ) ) {
 		);
 
 		// Re-Order address fields.
-        // We use phone field without using the last name field.
+		// We use phone field without using the last name field.
 		$address_fields = array_slice( $address_fields, 0, 1, true ) + array( 'shipping_phone' => $shipping_phone_field ) +
 		                  array_slice( $address_fields, 1, count( $address_fields ) - 1, true );
 
