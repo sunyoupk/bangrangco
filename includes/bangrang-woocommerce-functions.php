@@ -37,10 +37,8 @@ if ( ! function_exists( 'bangrang_unset_checkout_fields' ) ) {
 		unset( $fields['shipping']['shipping_state'] );
 		unset( $fields['shipping']['shipping_city'] );
 
-
 		$fields['shipping']['shipping_address_1']['required'] = 0;
 		$fields['shipping']['shipping_postcode']['required']  = 0;
-
 		$fields['shipping']['shipping_address_method'] = array(
 			'type' => 'radio',
 		);
@@ -107,22 +105,22 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 		);
 		?>
         <div class="shipping-address-method-fields">
-        <p class="form-row form-row-wide shipping-address-method-field validate-required"
-           id="shipping_address_method_field" data-priority="50">
-        <ul class="bangrang_shipping_methods shipping_address_methods methods">
-		<?php foreach ( $shipping_address_methods as $name => $props ) { ?>
-            <li class="shipping_address_method <?php echo esc_attr( $props['input_id'] ); ?>">
-                <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio"
-                       name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
-                       data-order_button_text="">
-                <label for="<?php echo esc_attr( $props['input_id'] ); ?>"><?php echo esc_html( $props['label'] ); ?></label>
-                <div class="shipping_address_box <?php echo esc_attr( $props['input_id'] ); ?>">
-            <p><?php echo esc_html( $props['description'] ); ?></p>
-            </div>
-            </li>
-		<?php } ?>
-        </ul>
-        </p>
+            <p class="form-row form-row-wide shipping-address-method-field validate-required"
+               id="shipping_address_method_field" data-priority="50">
+                <ul class="bangrang_shipping_methods shipping_address_methods methods">
+                    <?php foreach ( $shipping_address_methods as $name => $props ) { ?>
+                        <li class="shipping_address_method <?php echo esc_attr( $props['input_id'] ); ?>">
+                            <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio"
+                                   name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
+                                   data-order_button_text="">
+                            <label for="<?php echo esc_attr( $props['input_id'] ); ?>"><?php echo esc_html( $props['label'] ); ?></label>
+                            <div class="shipping_address_box <?php echo esc_attr( $props['input_id'] ); ?>">
+                                <p><?php echo esc_html( $props['description'] ); ?></p>
+                            </div>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </p>
         </div>
 		<?php
 	}
@@ -178,8 +176,6 @@ if ( ! function_exists( 'bangrang_after_checkout_validation' ) ) {
 
 if ( ! function_exists( 'bangrang_billing_fields' ) ) {
 	function bangrang_billing_fields( $address_fields, $country ) {
-		error_log( print_r( $address_fields, true ) );
-
 		$billing_phone_field             = $address_fields['billing_phone'];
 		$billing_phone_field['class']    = array( 'form-row-last' );
 		$billing_phone_field['priority'] = 20;
@@ -187,8 +183,6 @@ if ( ! function_exists( 'bangrang_billing_fields' ) ) {
 
 		$address_fields = array_slice( $address_fields, 0, 1, true ) + array( 'billing_phone' => $billing_phone_field ) +
 		                  array_slice( $address_fields, 1, count( $address_fields ) - 1, true );
-
-		error_log( print_r( $address_fields, true ) );
 
 		return $address_fields;
 	}
