@@ -7,6 +7,7 @@
  */
 
 add_filter( 'storefront_customizer_css', 'bangrang_storefront_customizer_css', 10, 1 );
+
 add_filter( 'woocommerce_checkout_fields', 'bangrang_unset_checkout_fields', 10, 1 );
 add_filter( 'woocommerce_billing_fields', 'bangrang_billing_fields', 10, 2 );
 add_filter( 'woocommerce_shipping_fields', 'bangrang_shipping_fields', 10, 2 );
@@ -94,13 +95,13 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 				'input_id'    => 'shipping_address_method_sms',
 				'input_value' => 'sms',
 				'label'       => '주소 입력폼 전송(SMS)',
-				'description' => '받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 SMS로 전송합니다.',
+				'description' => '주문확정을 하시면 받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 SMS로 전송합니다.',
 			),
 			'kakao'  => array(
 				'input_id'    => 'shipping_address_method_kakao',
 				'input_value' => 'kakao',
 				'label'       => '주소 입력폼 전송(kakao talk)',
-				'description' => '받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 kakao talk로 전송합니다.',
+				'description' => '주문확정을 하시면 받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 kakao talk로 전송합니다.',
 			),
 		);
 		?>
