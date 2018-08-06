@@ -19,8 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $show_shipping = ! wc_ship_to_billing_address_only() && $order->needs_shipping_address();
-
-$is_gift = empty( $order->get_meta( '_address_method' ) ) ? false : true;
+$is_gift = empty( $order->get_meta( '_shipping_address_method' ) ) ? false : true;
+$has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
+$order_status = $order->get_status();
 ?>
 <section class="woocommerce-customer-details">
 
@@ -44,6 +45,9 @@ $is_gift = empty( $order->get_meta( '_address_method' ) ) ? false : true;
 
 		<?php if ( $is_gift ) : ?>
         <p>배송방법: 선물하기</p>
+		<?php if ( ! $has_shipping_address || $order_status == 'on-hold' ) { ?>
+                <p><a class="button">주소입력 폼 재전송</a></p>
+        <?php } ?>
         <?php endif; ?>
 
 <!--		--><?php //if ( $order->get_billing_phone() ) : ?>
@@ -68,10 +72,14 @@ $is_gift = empty( $order->get_meta( '_address_method' ) ) ? false : true;
                 //echo wp_kses_post( $order->get_formatted_shipping_address( __( 'N/A', 'woocommerce' ) ) );
                 ?>
 				<?php if ( $is_gift ) : ?>
-                    <p>받는분: <?php echo esc_html( $order->get_shipping_first_name() ); ?></p>
-                    <p>연락처: <?php echo esc_html( $order->get_shipping_phone() ); ?></p>
+                <p>받는분: <?php echo esc_html( $order->get_shipping_first_name() ); ?></p>
+                <p>연락처: <?php echo esc_html( $order->get_meta( '_shipping_phone' )); ?></p>
 				<?php endif; ?>
-
+                <p>
+                    <?php echo esc_html( $order->get_shipping_address_1()); ?> <br/>
+                    <?php echo esc_html( $order->get_shipping_address_2()); ?> <br/>
+                    (우) <?php echo esc_html( $order->get_shipping_postcode()); ?>
+                </p>
 			</address>
 		</div><!-- /.col-2 -->
 

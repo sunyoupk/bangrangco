@@ -11,7 +11,6 @@ add_filter( 'storefront_customizer_css', 'bangrang_storefront_customizer_css', 1
 add_filter( 'woocommerce_checkout_fields', 'bangrang_unset_checkout_fields', 10, 1 );
 add_filter( 'woocommerce_billing_fields', 'bangrang_billing_fields', 10, 2 );
 add_filter( 'woocommerce_shipping_fields', 'bangrang_shipping_fields', 10, 2 );
-add_filter( 'woocommerce_formatted_address_replacements', 'bangrang_formatted_address_replacements', 10, 2 );
 
 add_action( 'woocommerce_before_checkout_shipping_form', 'bangrang_before_checkout_shipping_form', 10, 1 );
 add_action( 'woocommerce_after_checkout_shipping_form', 'bangrang_after_checkout_shipping_form', 10, 1 );
@@ -210,14 +209,5 @@ if ( ! function_exists( 'bangrang_shipping_fields' ) ) {
 		                  array_slice( $address_fields, 1, count( $address_fields ) - 1, true );
 
 		return $address_fields;
-	}
-}
-
-if ( ! function_exists( 'bangrang_formatted_address_replacements' ) ) {
-	function bangrang_formatted_address_replacements( $replace, $args ) {
-
-		error_log( print_r( $replace, true ) );
-
-		return $replace;
 	}
 }
