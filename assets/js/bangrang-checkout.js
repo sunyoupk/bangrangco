@@ -1,4 +1,5 @@
 /* global bangrang_checkout_params */
+/* global daum */
 jQuery( function( $ ) {
 
     // bangrang_checkout_params is required to continue, ensure the object exists
@@ -7,11 +8,15 @@ jQuery( function( $ ) {
     }
 
     var bangrang_checkout_form = {
-        $checkout_form: $( 'form.checkout' ),
+        $checkout_form: (bangrang_checkout_params.is_checkout == 1) ? $( 'form.checkout' ) : $( 'form.wc_ace_shipping_form' ),
         selectedShippingAddressMethod: false,
         init: function() {
             // shipping address methods.
             this.$checkout_form.on( 'click', 'input[name="shipping_address_method"]', this.shipping_address_method_selected );
+
+            // Postcode search
+            this.append_search_postcode();
+            this.$checkout_form.on( 'click', '.btn-search-postcode', this.search_postcode );
 
             // Address fields
             this.$checkout_form.on( 'change', '#ship-to-different-address input', this.ship_to_different_address );
@@ -22,7 +27,12 @@ jQuery( function( $ ) {
         },
 
         ship_to_different_address: function() {
+            $( 'div.shipping-address-method-fields' ).hide();
             var is_checked = $( this ).is( ':checked' );
+            if ( is_checked ) {
+                $( 'div.shipping-address-method-fields' ).slideDown();
+            }
+
             $( '.woocommerce-billing-fields' ).find( 'p.address-field' ).each( function( i, field ) {
                 if ( is_checked ) {
                     // Hide billing address fields.
@@ -41,7 +51,7 @@ jQuery( function( $ ) {
         },
 
         init_shipping_address_methods: function() {
-            var $shipping_address_methods = $( '.woocommerce-checkout' ).find( 'input[name="shipping_address_method"]' );
+            var $shipping_address_methods = this.$checkout_form.find( 'input[name="shipping_address_method"]' );
 
             // If there is one method, we can hide the radio input
             if ( 1 === $shipping_address_methods.length ) {
@@ -88,6 +98,7 @@ jQuery( function( $ ) {
 
             // Show shipping address fields(only direct).
             var selected_value = $( this ).val();
+
             $( '.shipping_address' ).find( 'p.address-field' ).each( function( i, field ) {
                 if ( selected_value === 'direct' ) {
                     $( field ).slideDown( 230 );
@@ -97,7 +108,9 @@ jQuery( function( $ ) {
                         $( field ).find( 'label' ).append( '&nbsp;<abbr class="required" title="' + '필수' + '">*</abbr>' );
                     }
                 } else {
-                    $( field ).filter( ':visible' ).slideUp( 0 );
+                    if ( bangrang_checkout_params.is_checkout == 1 ) {
+                        $( field ).filter( ':visible' ).slideUp( 0 );
+                    }
                     $( field ).removeClass( 'validate-required' );
                 }
                 $( field ).find( 'label .optional' ).remove();
@@ -110,6 +123,31 @@ jQuery( function( $ ) {
             }
 
             bangrang_checkout_form.selectedShippingAddressMethod = selectedShippingAddressMethod;
+        },
+
+        append_search_postcode: function() {
+            $( '#billing_address_1_field > label' ).append(
+                '<a data-type="billing" class="btn-search-postcode" style="cursor:pointer;"><i class="fa fa-search"></i></a>'
+            );
+            $( '#shipping_address_1_field > label' ).append(
+                '<a data-type="shipping" class="btn-search-postcode" style="cursor:pointer;"><i class="fa fa-search"></i></a>'
+            );
+        },
+
+        search_postcode: function () {
+            var type = $( this ).data( 'type' );
+            new daum.Postcode( {
+                oncomplete: function ( data ) {
+                    if ( bangrang_checkout_params.postcode_digit == '5' ) {
+                        $( '#' + type + '_postcode' ).val( data.zonecode );
+                    } else {
+                        $( '#' + type + '_postcode' ).val( data.postcode );
+                    }
+                    $( '#' + type + '_address_1' ).val( data.address );
+
+                    $( '#' + type + '_address_2' ).focus();
+                }
+            } ).open();
         }
     };
 

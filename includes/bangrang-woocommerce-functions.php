@@ -83,7 +83,10 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 	/**
 	 * Defer shipping form fields.
 	 */
-	function bangrang_before_checkout_shipping_form( $checkout ) {
+	function bangrang_before_checkout_shipping_form( $checkout = null ) {
+		if ( ! is_null( $checkout ) && ! is_a( $checkout, 'WC_Checkout' ) ) {
+		    $checked_id = $checkout;
+        }
 		$shipping_address_methods = array(
 			'direct' => array(
 				'input_id'    => 'shipping_address_method_direct',
@@ -113,6 +116,7 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
                         <li class="shipping_address_method <?php echo esc_attr( $props['input_id'] ); ?>">
                             <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio"
                                    name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
+                                   <?php echo ( isset( $checked_id ) && $checked_id === $props['input_value'] ? 'checked' : '' ); ?>
                                    data-order_button_text="">
                             <label for="<?php echo esc_attr( $props['input_id'] ); ?>"><?php echo esc_html( $props['label'] ); ?></label>
                             <div class="shipping_address_box <?php echo esc_attr( $props['input_id'] ); ?>">

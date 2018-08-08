@@ -26,7 +26,7 @@ class Bangrang_WooCommerce {
 	}
 
 	public static function load_scripts() {
-		global $post;
+		global $post, $pagenow, $wp;
 
 		if ( ! did_action( 'before_woocommerce_init' ) ) {
 			return;
@@ -35,7 +35,7 @@ class Bangrang_WooCommerce {
 		self::register_scripts();
 //		self::register_styles();
 
-		if ( is_checkout() ) {
+		if ( is_checkout() || is_view_order_page() ) {
 			self::enqueue_script( 'bangrang-checkout' );
 		}
 	}
@@ -58,9 +58,14 @@ class Bangrang_WooCommerce {
 		$suffix = '';
 
 		$register_scripts = array(
+			'postcode-api'    => array(
+				'src'     => '//ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js',
+				'deps'    => null,
+				'version' => null,
+			),
 			'bangrang-checkout' => array(
 				'src'     => get_stylesheet_directory_uri() . '/assets/js/bangrang-checkout' . $suffix . '.js',
-				'deps'    => array( 'jquery', 'woocommerce', 'wc-country-select', 'wc-address-i18n' ),
+				'deps'    => array( 'jquery', 'woocommerce', 'wc-country-select', 'wc-address-i18n', 'postcode-api' ),
 				'version' => BANGRANG_VERSION,
 			),
 		);
@@ -94,20 +99,21 @@ class Bangrang_WooCommerce {
 		switch ( $handle ) {
 			case 'bangrang-checkout':
 				$params = array(
-					'ajax_url'                  => WC()->ajax_url(),
-					'wc_ajax_url'               => WC_AJAX::get_endpoint( '%%endpoint%%' ),
-					'checkout_url'              => WC_AJAX::get_endpoint( 'checkout' ),
-					'is_checkout'               => is_page( wc_get_page_id( 'checkout' ) ) && empty( $wp->query_vars['order-pay'] ) && ! isset( $wp->query_vars['order-received'] ) ? 1 : 0,
-					'debug_mode'                => defined( 'WP_DEBUG' ) && WP_DEBUG,
-					'i18n_checkout_error'       => esc_attr__( 'Error processing checkout. Please try again.', 'woocommerce' ),
+					'ajax_url'            => WC()->ajax_url(),
+					'wc_ajax_url'         => WC_AJAX::get_endpoint( '%%endpoint%%' ),
+					'checkout_url'        => WC_AJAX::get_endpoint( 'checkout' ),
+					'is_checkout'         => is_page( wc_get_page_id( 'checkout' ) ) && empty( $wp->query_vars['order-pay'] ) && ! isset( $wp->query_vars['order-received'] ) ? 1 : 0,
+					'debug_mode'          => defined( 'WP_DEBUG' ) && WP_DEBUG,
+					'i18n_checkout_error' => esc_attr__( 'Error processing checkout. Please try again.', 'woocommerce' ),
+					'postcode_digit'      => '5',
 				);
 				break;
 			default:
 				$params = false;
 		}
 
-		return apply_filters( 'woocommerce_get_script_data', $params, $handle );
+		return $params;
 	}
 }
 
-return Bangrang_WooCommerce::init();
+Bangrang_WooCommerce::init();

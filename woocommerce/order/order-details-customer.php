@@ -18,75 +18,100 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-$show_shipping = ! wc_ship_to_billing_address_only() && $order->needs_shipping_address();
-$is_gift = empty( $order->get_meta( '_shipping_address_method' ) ) ? false : true;
+$show_shipping        = ! wc_ship_to_billing_address_only() && $order->needs_shipping_address();
+$is_gift              = empty( $order->get_meta( '_shipping_address_method' ) ) ? false : true;
 $has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
-$order_status = $order->get_status();
+$order_status         = $order->get_status();
 ?>
-<section class="woocommerce-customer-details">
 
-	<?php if ( $show_shipping ) : ?>
+<form name="checkout" class="checkout wc_ace_shipping_form">
+    <section class="woocommerce-customer-details woocommerce-shipping-fields">
 
-	<section class="woocommerce-columns woocommerce-columns--2 woocommerce-columns--addresses col2-set addresses">
-		<div class="woocommerce-column woocommerce-column--1 woocommerce-column--billing-address col-1">
+        <h2 class="woocommerce-column__title"><?php esc_html_e( 'Shipping address', 'woocommerce' ); ?></h2>
 
-	<?php endif; ?>
+        <address>
 
-	<h2 class="woocommerce-column__title"><?php esc_html_e( '구매자 정보', 'wc-ace' ); ?></h2>
+            <h3 id="ship-to-different-address">
+                <label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
+                    <input id="ship-to-different-address-checkbox"
+                           class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" <?php checked( $is_gift, 1 ); ?>
+                           type="checkbox" name="ship_to_different_address" value="1"/>
+                    <span><?php _e( '선물하기', 'bangrang' ); ?></span>
+                </label>
+            </h3>
 
-	<address>
-		<?php
-            // This code doesn't use.
-            // echo wp_kses_post( $order->get_formatted_billing_address( __( 'N/A', 'woocommerce' ) ) );
-		?>
-        <p>이름: <?php echo esc_html( $order->get_billing_first_name() ); ?></p>
-        <p>연락처: <?php echo esc_html( $order->get_billing_phone() ); ?></p>
-        <p>이메일: <?php echo esc_html( $order->get_billing_email() ); ?></p>
+			<?php
+			echo '<div>';
 
-		<?php if ( $is_gift ) : ?>
-        <p>배송방법: 선물하기</p>
-		<?php if ( ! $has_shipping_address || $order_status == 'on-hold' ) { ?>
-                <p><a class="button">주소입력 폼 재전송</a></p>
-        <?php } ?>
-        <?php endif; ?>
+			if ( $order_status == 'on-hold' ) {
+				echo bangrang_before_checkout_shipping_form( $order->get_meta( '_shipping_address_method' ) );
+			}
+			?>
 
-<!--		--><?php //if ( $order->get_billing_phone() ) : ?>
-<!--			<p class="woocommerce-customer-details--phone">--><?php //echo esc_html( $order->get_billing_phone() ); ?><!--</p>-->
-<!--		--><?php //endif; ?>
-<!---->
-<!--		--><?php //if ( $order->get_billing_email() ) : ?>
-<!--			<p class="woocommerce-customer-details--email">--><?php //echo esc_html( $order->get_billing_email() ); ?><!--</p>-->
-<!--		--><?php //endif; ?>
+			<?php if ( is_order_received_page() ) {
+				echo '</div>';
+			} ?>
 
-	</address>
+            <div class="woocommerce-shipping-fields__field-wrapper">
 
-	<?php if ( $show_shipping ) : ?>
-
-		</div><!-- /.col-1 -->
-
-		<div class="woocommerce-column woocommerce-column--2 woocommerce-column--shipping-address col-2">
-			<h2 class="woocommerce-column__title"><?php esc_html_e( 'Shipping address', 'woocommerce' ); ?></h2>
-			<address>
 				<?php
-                // Customization.
-                //echo wp_kses_post( $order->get_formatted_shipping_address( __( 'N/A', 'woocommerce' ) ) );
-                ?>
-				<?php if ( $is_gift ) : ?>
-                <p>받는분: <?php echo esc_html( $order->get_shipping_first_name() ); ?></p>
-                <p>연락처: <?php echo esc_html( $order->get_meta( '_shipping_phone' )); ?></p>
-				<?php endif; ?>
-                <p>
-                    <?php echo esc_html( $order->get_shipping_address_1()); ?> <br/>
-                    <?php echo esc_html( $order->get_shipping_address_2()); ?> <br/>
-                    (우) <?php echo esc_html( $order->get_shipping_postcode()); ?>
-                </p>
-			</address>
-		</div><!-- /.col-2 -->
+				$shipping_fields = apply_filters( 'woocommerce_checkout_fields', array(
+					'shipping' => WC()->countries->get_address_fields(
+						'',
+						'shipping_'
+					),
+				) );
+				$fields          = $shipping_fields['shipping'];
 
-	</section><!-- /.col2-set -->
+				foreach ( $fields as $key => $field ) {
+					if ( is_order_received_page() ) {
+						$field['custom_attributes']['readonly'] = 'readonly';
+                    }
+					switch ( $key ) {
+						case 'shipping_first_name':
+							$value = esc_html( $order->get_shipping_first_name() );
+							break;
+						case 'shipping_phone':
+							$value = esc_html( $order->get_meta( '_shipping_phone' ) );
+							break;						case 'shipping_address_1':
+							$value = esc_html( $order->get_shipping_address_1() );
+							break;
+						case 'shipping_address_2':
+							$value = esc_html( $order->get_shipping_address_2() );
+							break;
+						case 'shipping_postcode':
+							$value = esc_html( $order->get_shipping_postcode() );
+							break;
+						default:
+							$value = null;
+							break;
+					}
+					woocommerce_form_field( $key, $field, $value );
+				}
+				?>
+            </div>
 
-	<?php endif; ?>
+			<?php if ( ! is_order_received_page() ) {
+				echo '</div>';
+			} ?>
 
-	<?php do_action( 'woocommerce_order_details_after_customer_details', $order ); ?>
+			<?php if ( ! $has_shipping_address || $order_status == 'on-hold' ) { ?>
+				<?php if ( is_order_received_page() ) { ?>
+                    <p>
+                        <a class="button" href="<?php echo esc_url( $order->get_view_order_url() ); ?>">주소 변경</a>
+                    </p>
+				<?php } else { ?>
+                    <p>
+                        <button type="button" class="button send-address">주소입력 폼 재전송</button>
+                        <button type="submit" class="button">주소저장</button>
+                    </p>
+				<?php } ?>
 
-</section>
+			<?php } ?>
+
+        </address>
+
+		<?php do_action( 'woocommerce_order_details_after_customer_details', $order ); ?>
+
+    </section>
+</form>
