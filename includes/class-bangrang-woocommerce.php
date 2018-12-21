@@ -58,7 +58,7 @@ class Bangrang_WooCommerce {
 		$suffix = '';
 
 		$register_scripts = array(
-			'postcode-api'    => array(
+			'postcode-api'      => array(
 				'src'     => '//ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js',
 				'deps'    => null,
 				'version' => null,
@@ -103,7 +103,10 @@ class Bangrang_WooCommerce {
 					'wc_ajax_url'         => WC_AJAX::get_endpoint( '%%endpoint%%' ),
 					'checkout_url'        => WC_AJAX::get_endpoint( 'checkout' ),
 					'is_checkout'         => is_page( wc_get_page_id( 'checkout' ) ) && empty( $wp->query_vars['order-pay'] ) && ! isset( $wp->query_vars['order-received'] ) ? 1 : 0,
-					'is_editable'         => is_a( $theorder, 'WC_Order' ) ? in_array( $theorder->get_status(), array( 'on-hold', 'gift-addressing' ) ) : false,
+					'is_editable'         => is_a( $theorder, 'WC_Order' ) ? in_array( $theorder->get_status(), array(
+						'on-hold',
+						'gift-addressing'
+					) ) : true,
 					'debug_mode'          => defined( 'WP_DEBUG' ) && WP_DEBUG,
 					'i18n_checkout_error' => esc_attr__( 'Error processing checkout. Please try again.', 'woocommerce' ),
 					'postcode_digit'      => '5',
