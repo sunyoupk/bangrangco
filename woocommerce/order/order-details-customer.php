@@ -19,9 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $show_shipping        = ! wc_ship_to_billing_address_only() && $order->needs_shipping_address();
-$is_gift              = empty( $order->get_meta( '_shipping_address_method' ) ) ? false : true;
+$is_gift              = empty( $order->get_meta( '_is_gift' ) ) ? false : true;
 $has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
 $order_status         = $order->get_status();
+$is_editable          = in_array( $order_status, array( 'on-hold', 'gift-addressing' ) );
 ?>
 
 <form name="checkout" class="checkout wc_ace_shipping_form">
@@ -30,12 +31,13 @@ $order_status         = $order->get_status();
         <h2 class="woocommerce-column__title"><?php esc_html_e( 'Shipping address', 'woocommerce' ); ?></h2>
 
         <address>
-
             <h3 id="ship-to-different-address">
                 <label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
                     <input id="ship-to-different-address-checkbox"
                            class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" <?php checked( $is_gift, 1 ); ?>
-                           type="checkbox" name="ship_to_different_address" value="1"/>
+                           type="checkbox" name="ship_to_different_address" value="1"
+                           <?php echo $is_editable == false ? 'disabled' : ''; ?>
+                    />
                     <span><?php _e( '선물하기', 'bangrang' ); ?></span>
                 </label>
             </h3>
@@ -43,7 +45,7 @@ $order_status         = $order->get_status();
 			<?php
 			echo '<div>';
 
-			if ( $order_status == 'on-hold' ) {
+			if ( $is_editable ) {
 				echo bangrang_before_checkout_shipping_form( $order->get_meta( '_shipping_address_method' ) );
 			}
 			?>
@@ -53,7 +55,6 @@ $order_status         = $order->get_status();
 			} ?>
 
             <div class="woocommerce-shipping-fields__field-wrapper">
-
 				<?php
 				$shipping_fields = apply_filters( 'woocommerce_checkout_fields', array(
 					'shipping' => WC()->countries->get_address_fields(
@@ -64,16 +65,17 @@ $order_status         = $order->get_status();
 				$fields          = $shipping_fields['shipping'];
 
 				foreach ( $fields as $key => $field ) {
-					if ( is_order_received_page() ) {
+					if ( is_order_received_page() || ! $is_editable ) {
 						$field['custom_attributes']['readonly'] = 'readonly';
-                    }
+					}
 					switch ( $key ) {
 						case 'shipping_first_name':
 							$value = esc_html( $order->get_shipping_first_name() );
 							break;
 						case 'shipping_phone':
 							$value = esc_html( $order->get_meta( '_shipping_phone' ) );
-							break;						case 'shipping_address_1':
+							break;
+						case 'shipping_address_1':
 							$value = esc_html( $order->get_shipping_address_1() );
 							break;
 						case 'shipping_address_2':
@@ -95,7 +97,7 @@ $order_status         = $order->get_status();
 				echo '</div>';
 			} ?>
 
-			<?php if ( ! $has_shipping_address || $order_status == 'on-hold' ) { ?>
+			<?php if ( $is_editable ) { ?>
 				<?php if ( is_order_received_page() ) { ?>
                     <p>
                         <a class="button" href="<?php echo esc_url( $order->get_view_order_url() ); ?>">주소 변경</a>

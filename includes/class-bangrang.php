@@ -49,7 +49,6 @@ class Bangrang {
 		wp_register_style( 'bangrang', get_stylesheet_directory_uri() . '/assets/css/bangrang' . $suffix . '.css', array(), $bangrang_version );
 //		wp_enqueue_style( 'bangrang-style', get_template_directory_uri() . '/style.css', array( 'bangrang' ), $bangrang_version );
 //		wp_enqueue_style( 'bangrang-font', get_template_directory_uri() . '/assets/css/bookcraft-font.css', '', $bangrang_version );
-
 		//wp_enqueue_style( 'bangrang-icons', get_template_directory_uri() . '/assets/sass/base/icons.css', '', $bangrang_version );
 
 		/**
@@ -68,8 +67,8 @@ class Bangrang {
 
 		$fonts_url = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
 
+		wp_enqueue_style('storefront', get_template_directory_uri() .'/style.css');
 		wp_enqueue_style( 'bangrang', $fonts_url, array(), null );
-
 	}
 
 }

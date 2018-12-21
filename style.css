@@ -1,13 +1,9 @@
-@charset "UTF-8";
 /*
-Theme Name: bangrang
+Theme Name: bangrangco
 Description: 방랑부부 테마
 Version: 1.0
 Author: Sunyoup Kim
 Author URI:   http://bangrang.co
 Template: Storefront
-Text Domain:  bangrang
+Text Domain:  bangrangco
 */
-@import url("../storefront/style.css");
-
-/*# sourceMappingURL=style.css.map */

@@ -87,35 +87,14 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 		if ( ! is_null( $checkout ) && ! is_a( $checkout, 'WC_Checkout' ) ) {
 		    $checked_id = $checkout;
         }
-		$shipping_address_methods = array(
-			'direct' => array(
-				'input_id'    => 'shipping_address_method_direct',
-				'input_value' => 'direct',
-				'label'       => '주소 직접입력',
-				'description' => '선물로 보낼 주소를 직접 입력합니다.',
-			),
-			'sms'    => array(
-				'input_id'    => 'shipping_address_method_sms',
-				'input_value' => 'sms',
-				'label'       => '주소 입력폼 전송(SMS)',
-				'description' => '주문확정을 하시면 받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 SMS로 전송합니다.',
-			),
-			'kakao'  => array(
-				'input_id'    => 'shipping_address_method_kakao',
-				'input_value' => 'kakao',
-				'label'       => '주소 입력폼 전송(kakao talk)',
-				'description' => '주문확정을 하시면 받는 분이 주소를 직접 입력하도록 입력 화면의 URL을 kakao talk로 전송합니다.',
-			),
-		);
+		$shipping_address_methods = wc_ace_gift_message_api();
 		?>
         <div class="shipping-address-method-fields">
-            <p class="form-row form-row-wide shipping-address-method-field validate-required"
-               id="shipping_address_method_field" data-priority="50">
+            <p class="form-row form-row-wide shipping-address-method-field validate-required" id="shipping_address_method_field" data-priority="50">
                 <ul class="bangrang_shipping_methods shipping_address_methods methods">
                     <?php foreach ( $shipping_address_methods as $name => $props ) { ?>
                         <li class="shipping_address_method <?php echo esc_attr( $props['input_id'] ); ?>">
-                            <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio"
-                                   name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
+                            <input id="<?php echo esc_attr( $props['input_id'] ); ?>" type="radio" class="input-radio" name="shipping_address_method" value="<?php echo esc_attr( $props['input_value'] ); ?>"
                                    <?php echo ( isset( $checked_id ) && $checked_id === $props['input_value'] ? 'checked' : '' ); ?>
                                    data-order_button_text="">
                             <label for="<?php echo esc_attr( $props['input_id'] ); ?>"><?php echo esc_html( $props['label'] ); ?></label>
@@ -145,7 +124,6 @@ if ( ! function_exists( 'bangrang_after_checkout_shipping_form' ) ) {
 if ( ! function_exists( 'bangrang_after_checkout_validation' ) ) {
 	/**
 	 * Validate address fields.
-	 * todo if check many fields then replace code(iterlation...).
 	 *
 	 * @param $data
 	 * @param WP_Error $errors
@@ -162,6 +140,11 @@ if ( ! function_exists( 'bangrang_after_checkout_validation' ) ) {
 
 			if ( $data['shipping_address_method'] === 'direct' && $data['shipping_postcode'] === '' ) {
 				$field_label = sprintf( __( 'Shipping %s', 'woocommerce' ), __( 'Postcode / ZIP', 'woocommerce' ) );
+				$errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
+			}
+
+			if ( $data['shipping_address_method'] === 'email' && $data['shipping_email'] === '' ) {
+				$field_label = sprintf( __( 'Shipping %s', 'woocommerce' ), __( 'Email address', 'woocommerce' ) );
 				$errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
 			}
 
@@ -206,10 +189,21 @@ if ( ! function_exists( 'bangrang_shipping_fields' ) ) {
 			'autocomplete' => 'tel',
 			'priority'     => 20,
 		);
+		// New shipping email field
+		$shipping_email_field = array(
+			'label'        => __( 'Email', 'woocommerce' ),
+			'required'     => '',
+			'type'         => 'email',
+			'class'        => array( 'form-row-wide' ),
+			'validate'     => array( 'email' ),
+			'autocomplete' => 'email',
+			'priority'     => 20,
+		);
 
 		// Re-Order address fields.
 		// We use phone field without using the last name field.
-		$address_fields = array_slice( $address_fields, 0, 1, true ) + array( 'shipping_phone' => $shipping_phone_field ) +
+		$address_fields = array_slice( $address_fields, 0, 1, true ) +
+                          array( 'shipping_phone' => $shipping_phone_field ) + array( 'shipping_email' => $shipping_email_field ) +
 		                  array_slice( $address_fields, 1, count( $address_fields ) - 1, true );
 
 		return $address_fields;
