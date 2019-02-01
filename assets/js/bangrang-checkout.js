@@ -15,8 +15,6 @@ jQuery( function ( $ ) {
             this.$checkout_form.on( 'click', 'input[name="shipping_address_method"]', this.shipping_address_method_selected );
 
             // Postcode search
-            console.log( 'bangrang_checkout_form' );
-            console.log( bangrang_checkout_params.is_editable );
             if ( bangrang_checkout_params.is_editable ) this.append_search_postcode();
             this.$checkout_form.on( 'click', '.btn-search-postcode', this.search_postcode );
 

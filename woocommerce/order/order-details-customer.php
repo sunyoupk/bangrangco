@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 $show_shipping        = ! wc_ship_to_billing_address_only() && $order->needs_shipping_address();
-$is_gift              = empty( $order->get_meta( '_is_gift' ) ) ? false : true;
+$is_gift              = $order->get_meta( '_is_gift' ) == 'yes' ? true : false;
 $has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
 $order_status         = $order->get_status();
 $is_editable          = in_array( $order_status, array( 'on-hold', 'gift-addressing' ) );
