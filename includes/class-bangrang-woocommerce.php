@@ -36,7 +36,7 @@ class Bangrang_WooCommerce {
 //		self::register_styles();
 
 		if ( is_checkout() || is_view_order_page() ) {
-			self::enqueue_script( 'bangrang-checkout' );
+//			self::enqueue_script( 'bangrang-checkout' );
 		}
 	}
 

@@ -23,6 +23,9 @@ $is_gift              = $order->get_meta( '_is_gift' ) == 'yes' ? true : false;
 $has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
 $order_status         = $order->get_status();
 $is_editable          = in_array( $order_status, array( 'on-hold', 'gift-addressing' ) );
+
+global $wp;
+error_log( print_r( $wp, true ) );
 ?>
 
 <form name="checkout" class="checkout wc_ace_shipping_form">
@@ -84,6 +87,9 @@ $is_editable          = in_array( $order_status, array( 'on-hold', 'gift-address
 						case 'shipping_postcode':
 							$value = esc_html( $order->get_shipping_postcode() );
 							break;
+						case 'shipping_email':
+							$value = esc_html( $order->get_meta( '_shipping_email' ) );
+							break;
 						default:
 							$value = null;
 							break;
@@ -98,7 +104,10 @@ $is_editable          = in_array( $order_status, array( 'on-hold', 'gift-address
 			} ?>
 
 			<?php if ( $is_editable ) { ?>
-				<?php if ( is_order_received_page() ) { ?>
+				<?php
+                    if ( is_order_received_page() ) {
+                    // 주소변경 폼으로 redirection.
+				?>
                     <p>
                         <a class="button" href="<?php echo esc_url( $order->get_view_order_url() ); ?>">주소 변경</a>
                     </p>
