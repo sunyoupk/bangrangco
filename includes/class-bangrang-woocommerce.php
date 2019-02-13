@@ -1,12 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ace
- * Date: 18/07/2018
- * Time: 5:16 PM
- */
-
-/**
  * Class Bangrang_WooCommerce
  * WooCommerce customization
  */
@@ -26,18 +19,13 @@ class Bangrang_WooCommerce {
 	}
 
 	public static function load_scripts() {
-		global $post, $pagenow, $wp;
-
 		if ( ! did_action( 'before_woocommerce_init' ) ) {
 			return;
 		}
-
 		self::register_scripts();
-//		self::register_styles();
 
-		if ( is_checkout() || is_view_order_page() ) {
-//			self::enqueue_script( 'bangrang-checkout' );
-		}
+		// 조건에 따라 추가된 스크립트를 enqueue 해줄 수 있다.
+        // Enqueue something scripts.
 	}
 
 	public static function localize_printed_scripts() {
@@ -57,21 +45,17 @@ class Bangrang_WooCommerce {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		$suffix = '';
 
-		$register_scripts = array(
-			'postcode-api'      => array(
-				'src'     => '//ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js',
-				'deps'    => null,
-				'version' => null,
-			),
-			'bangrang-checkout' => array(
-				'src'     => get_stylesheet_directory_uri() . '/assets/js/bangrang-checkout' . $suffix . '.js',
-				'deps'    => array( 'jquery', 'woocommerce', 'wc-country-select', 'wc-address-i18n', 'postcode-api' ),
-				'version' => BANGRANG_VERSION,
-			),
-		);
-		foreach ( $register_scripts as $name => $props ) {
-			self::register_script( $name, $props['src'], $props['deps'], $props['version'] );
-		}
+		// 추후 테마에 적용할 스크립트가 있다면 아래의 배열에 추가한다.
+//		$register_scripts = array(
+//			'bangrang-checkout' => array(
+//				'src'     => get_stylesheet_directory_uri() . '/assets/js/bangrang-checkout' . $suffix . '.js',
+//				'deps'    => array( 'jquery', 'woocommerce', 'wc-country-select', 'wc-address-i18n', 'postcode-api' ),
+//				'version' => BANGRANG_VERSION,
+//			),
+//		);
+//		foreach ( $register_scripts as $name => $props ) {
+//			self::register_script( $name, $props['src'], $props['deps'], $props['version'] );
+//		}
 	}
 
 	private static function register_script( $handle, $path, $deps = array( 'jquery' ), $version = BANGRANG_VERSION, $in_footer = true ) {
