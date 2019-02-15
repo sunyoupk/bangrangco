@@ -87,7 +87,7 @@ if ( ! function_exists( 'bangrang_before_checkout_shipping_form' ) ) {
 		if ( ! is_null( $checkout ) && ! is_a( $checkout, 'WC_Checkout' ) ) {
 		    $checked_id = $checkout;
         }
-		$shipping_address_methods = wc_ace_gift_message_api();
+		$shipping_address_methods = wk_gift_message_api();
 		?>
         <div class="shipping-address-method-fields">
             <p class="form-row form-row-wide shipping-address-method-field validate-required" id="shipping_address_method_field" data-priority="50">

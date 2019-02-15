@@ -23,12 +23,9 @@ $is_gift              = $order->get_meta( '_is_gift' ) == 'yes' ? true : false;
 $has_shipping_address = empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_address_2() ) ? false : true;
 $order_status         = $order->get_status();
 $is_editable          = in_array( $order_status, array( 'on-hold', 'gift-addressing' ) );
-
-global $wp;
-error_log( print_r( $wp, true ) );
 ?>
 
-<form name="checkout" class="checkout wc_ace_shipping_form">
+<form name="checkout" class="checkout wk_shipping_form">
     <section class="woocommerce-customer-details woocommerce-shipping-fields">
 
         <h2 class="woocommerce-column__title"><?php esc_html_e( 'Shipping address', 'woocommerce' ); ?></h2>

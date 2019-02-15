@@ -8,7 +8,7 @@ jQuery( function ( $ ) {
     }
 
     var bangrang_checkout_form = {
-        $checkout_form: ( bangrang_checkout_params.is_checkout == 1 ) ? $( 'form.checkout' ) : $( 'form.wc_ace_shipping_form' ),
+        $checkout_form: ( bangrang_checkout_params.is_checkout == 1 ) ? $( 'form.checkout' ) : $( 'form.wk_shipping_form' ),
         selectedShippingAddressMethod: false,
         init: function () {
             // shipping address methods.
